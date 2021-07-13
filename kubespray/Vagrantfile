@@ -237,28 +237,28 @@ Vagrant.configure("2") do |config|
         "ansible_ssh_user": SUPPORTED_OS[$os][:user]
       }
 
-      # Only execute the Ansible provisioner once, when all the machines are up and ready.
-      if i == $num_instances
-        node.vm.provision "ansible" do |ansible|
-          ansible.playbook = $playbook
-          $ansible_inventory_path = File.join( $inventory, "hosts.ini")
-          if File.exist?($ansible_inventory_path)
-            ansible.inventory_path = $ansible_inventory_path
-          end
-          ansible.become = true
-          ansible.limit = "all,localhost"
-          ansible.host_key_checking = false
-          ansible.raw_arguments = ["--forks=#{$num_instances}", "--flush-cache", "-e ansible_become_pass=vagrant"]
-          ansible.host_vars = host_vars
-          #ansible.tags = ['download']
-          ansible.groups = {
-            "etcd" => ["#{$instance_name_prefix}-[1:#{$etcd_instances}]"],
-            "kube_control_plane" => ["#{$instance_name_prefix}-[1:#{$kube_master_instances}]"],
-            "kube_node" => ["#{$instance_name_prefix}-[1:#{$kube_node_instances}]"],
-            "k8s_cluster:children" => ["kube_control_plane", "kube_node"],
-          }
-        end
-      end
+      # # Only execute the Ansible provisioner once, when all the machines are up and ready.
+      # if i == $num_instances
+      #   node.vm.provision "ansible" do |ansible|
+      #     ansible.playbook = $playbook
+      #     $ansible_inventory_path = File.join( $inventory, "hosts.ini")
+      #     if File.exist?($ansible_inventory_path)
+      #       ansible.inventory_path = $ansible_inventory_path
+      #     end
+      #     ansible.become = true
+      #     ansible.limit = "all,localhost"
+      #     ansible.host_key_checking = false
+      #     ansible.raw_arguments = ["--forks=#{$num_instances}", "--flush-cache", "-e ansible_become_pass=vagrant"]
+      #     ansible.host_vars = host_vars
+      #     #ansible.tags = ['download']
+      #     ansible.groups = {
+      #       "etcd" => ["#{$instance_name_prefix}-[1:#{$etcd_instances}]"],
+      #       "kube_control_plane" => ["#{$instance_name_prefix}-[1:#{$kube_master_instances}]"],
+      #       "kube_node" => ["#{$instance_name_prefix}-[1:#{$kube_node_instances}]"],
+      #       "k8s_cluster:children" => ["kube_control_plane", "kube_node"],
+      #     }
+      #   end
+      # end
 
     end
   end
