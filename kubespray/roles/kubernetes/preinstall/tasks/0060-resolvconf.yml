@@ -18,7 +18,6 @@
     create: yes
     backup: yes
     marker: "# Ansible entries {mark}"
-    mode: 0644
   notify: Preinstall | propagate resolvconf to k8s components
 
 - name: Remove search/domain/nameserver options before block

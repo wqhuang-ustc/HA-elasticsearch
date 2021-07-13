@@ -12,13 +12,13 @@
     - { role: kubespray-defaults}
     - { role: bastion-ssh-config, tags: ["localhost", "bastion"]}
 
-- hosts: etcd[0]
+- hosts: "{{ groups['etcd'] | first }}"
   environment: "{{ proxy_disable_env }}"
   roles:
     - { role: kubespray-defaults}
     - { role: recover_control_plane/etcd }
 
-- hosts: kube_control_plane[0]
+- hosts: "{{ groups['kube_control_plane'] | first }}"
   environment: "{{ proxy_disable_env }}"
   roles:
     - { role: kubespray-defaults}
@@ -26,7 +26,7 @@
 
 - include: cluster.yml
 
-- hosts: kube_control_plane
+- hosts: "{{ groups['kube_control_plane'] }}"
   environment: "{{ proxy_disable_env }}"
   roles:
     - { role: kubespray-defaults}

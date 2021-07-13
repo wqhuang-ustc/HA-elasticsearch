@@ -38,7 +38,7 @@
   run_once: true
   register: test_become
   changed_when: false
-  ignore_errors: true  # noqa ignore-errors
+  ignore_errors: true
   become: true
   when:
     - download_localhost
@@ -53,7 +53,7 @@
   run_once: true
   register: test_docker
   changed_when: false
-  ignore_errors: true  # noqa ignore-errors
+  ignore_errors: true
   become: false
   when:
     - download_localhost

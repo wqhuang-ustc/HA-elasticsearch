@@ -1,0 +1,35 @@
+apiVersion: kibana.k8s.elastic.co/v1
+kind: Kibana
+metadata:
+  name: kibana-demo
+  namespace: default
+spec:
+  version: 7.12.0
+  count: 1
+  elasticsearchRef:
+    name: "elasticsearch-demo"
+    namespace: default
+  http:
+    tls:
+      selfSignedCertificate:
+        disabled: true
+    service:
+     spec:
+       type: NodePort  
+  #http:
+  #  service:
+  #    spec:
+  #      type: LoadBalancer
+  # this shows how to customize the Kibana pod
+  # with labels and resource limits
+  podTemplate:
+    metadata:
+      labels:
+        app: kibana
+    spec:
+      containers:
+      - name: kibana
+        # resources:
+        #   limits:
+        #     memory: 1Gi
+        #     cpu: 1

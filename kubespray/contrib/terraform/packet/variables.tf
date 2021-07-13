@@ -3,7 +3,7 @@ variable "cluster_name" {
 }
 
 variable "packet_project_id" {
-  description = "Your Equinix Metal project ID. See https://metal.equinix.com/developers/docs/accounts/"
+  description = "Your Packet project ID. See https://support.packet.com/kb/articles/api-integrations"
 }
 
 variable "operating_system" {

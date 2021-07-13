@@ -52,8 +52,7 @@ image_arch: "{{host_architecture | default('amd64')}}"
 kubeadm_version: "{{ kube_version }}"
 etcd_version: v3.4.13
 crun_version: 0.19
-kata_containers_version: 2.1.0
-gvisor_version: 20210518.0
+kata_containers_version: 1.12.1
 
 # gcr and kubernetes image repo define
 gcr_image_repo: "gcr.io"
@@ -67,10 +66,9 @@ quay_image_repo: "quay.io"
 
 # TODO(mattymo): Move calico versions to roles/network_plugins/calico/defaults
 # after migration to container download
-calico_version: "v3.18.4"
+calico_version: "v3.17.4"
 calico_ctl_version: "{{ calico_version }}"
 calico_cni_version: "{{ calico_version }}"
-calico_flexvol_version: "{{ calico_version }}"
 calico_policy_version: "{{ calico_version }}"
 calico_typha_version: "{{ calico_version }}"
 typha_enabled: false
@@ -80,7 +78,7 @@ cni_version: "v0.9.1"
 weave_version: 2.8.1
 pod_infra_version: "3.3"
 cilium_version: "v1.8.9"
-kube_ovn_version: "v1.7.0"
+kube_ovn_version: "v1.6.2"
 kube_router_version: "v1.2.2"
 multus_version: "v3.7"
 ovn4nfv_ovn_image_version: "v1.0.0"
@@ -108,9 +106,7 @@ calico_crds_download_url: "https://github.com/projectcalico/calico/archive/{{ ca
 crictl_download_url: "https://github.com/kubernetes-sigs/cri-tools/releases/download/{{ crictl_version }}/crictl-{{ crictl_version }}-{{ ansible_system | lower }}-{{ image_arch }}.tar.gz"
 helm_download_url: "https://get.helm.sh/helm-{{ helm_version }}-linux-{{ image_arch }}.tar.gz"
 crun_download_url: "https://github.com/containers/crun/releases/download/{{ crun_version }}/crun-{{ crun_version }}-linux-{{ image_arch }}"
-kata_containers_download_url: "https://github.com/kata-containers/kata-containers/releases/download/{{ kata_containers_version }}/kata-static-{{ kata_containers_version }}-{{ ansible_architecture }}.tar.xz"
-# gVisor only supports amd64 and uses x86_64 to in the download link
-gvisor_download_url: "https://storage.googleapis.com/gvisor/releases/release/{{ gvisor_version }}/{{ ansible_architecture }}"
+kata_containers_download_url: "https://github.com/kata-containers/runtime/releases/download/{{ kata_containers_version }}/kata-static-{{ kata_containers_version }}-{{ ansible_architecture }}.tar.xz"
 nerdctl_download_url: "https://github.com/containerd/nerdctl/releases/download/v{{ nerdctl_version }}/nerdctl-{{ nerdctl_version }}-{{ ansible_system | lower }}-{{ image_arch }}.tar.gz"
 krew_download_url: "https://github.com/kubernetes-sigs/krew/releases/download/{{ krew_version }}/krew.tar.gz"
 
@@ -353,21 +349,21 @@ cni_binary_checksums:
   amd64: 962100bbc4baeaaa5748cdbfce941f756b1531c2eadb290129401498bfac21e7
 calicoctl_binary_checksums:
   arm:
-    v3.19.1: 0
-    v3.18.4: 0
+    v3.18.3: 0
     v3.17.4: 0
+    v3.16.10: 0
   amd64:
-    v3.19.1: e50980e9ceb6e3d37751cba2d871d76264c702c205824ae53584c97e2ad726fc
-    v3.18.4: 6ae74a5b9478476c957d4ed4a07ce059521b0c1492aba45f7d59214adc9b547a
+    v3.18.3: 03c31b84c99f03e2c5118985da502bd7c492461e8180e7cb00fb8a98fdd9aff3
     v3.17.4: dbd6e9d548577a8d940f353ac28100b6dc7471ccf099e6194fce733a153dfe45
+    v3.16.10: 4078311aaf8c7efd642a82b1c3a8b7b9ef9a7eb0d94fc03f4dce88789e40e35b
   arm64:
-    v3.19.1: 0bc3cb144deae5536065f48267ad80a340b917b9304bb20ef3ef64ef323372c0
-    v3.18.4: 0dd24c2c561f4ea48134143464dc9fa6a5fd9917b7a00b5e2da12baa98a83b6b
+    v3.18.3: 24e9f847a4b8677322c087e9ee878aa85700909a02629001d2fe48b37f48c65c
     v3.17.4: 84595b2d154f65e64c1b7ce5cdb678400d4c1e1023dc1910b59b9aa2878d5b5b
+    v3.16.10: 1ccd3c2ab79eabbf6975edb92eab4ca516141e6fa4e76f1f7ed037dc53910b7e
 calico_crds_archive_checksums:
-  v3.19.1: 2a1b3f8933c9045d46f4c433224500ee67092844dee212e45482ea927694f0b3
-  v3.18.4: 047a62e7653d4a2d13931123867b14d3292e4ab5c307cd8750a0160d767801e3
+  v3.18.3: 6db4634d174167c85f4dfa5ce8607a8d8590625ddc3fd34a4ef5d8c7a94724de
   v3.17.4: 92b9d37dcebe382a8e43d4384cfcceb5c9bc22459a2f8cdd89ab7c41b09a7532
+  v3.16.10: a4627285afe5761a2681452bfcc858ec998ba2dae3060283b81b5ae3f7ea386b
 
 krew_archive_checksums:
   v0.4.1: a26deea175f70264260d59a4e061778a892f8a8e301ac261660dd7d24c551c99
@@ -386,39 +382,23 @@ crun_checksums:
     0.16: a16508a9c15a2aa898d6ba18bbc394cd37cdb4e3968f177f2fbb7b70a8a0f4fb
     0.17: af99d543a41c5ef441e9e653b60392e8d6988a56762819a6959031e3154e94c1
     0.18: e94578c013eae98b0a50477f6bc77963a7c85145bf280da39f9855d69d9cab53
-    0.19: 01331478858af57ff45ef7d980f9c5a45e387833591c2345a7e8f7125dfbd833
+    0.19: bb12a7e1f3c8d5e29527f9cc4d18ec18724607d108bb0d276340014ea22569c8
   arm64:
     0.16: 0
     0.17: 0
     0.18: e580157bc8f87114a2f1d8ac28f8a7c4a588dfa21969fc99f78919cb9bf3ed0a
-    0.19: 0471944e093dd3340a6807e55702959aaafabe1597ed7ea0ef512abb6f27914b
+    0.19: 18ee1f2e50ba07dc0e8c35c86cd4c8990942a2adebaabfc20e26e11db4b01a28
 
 kata_containers_binary_checksums:
   arm:
-    2.0.4: 0
-    2.1.0: 0
+    1.11.3: 0
+    1.12.1: 0
   amd64:
-    2.0.4: 022a60c2d92a5ab9a5eb83d5a95154a2d06fdc2206b2a473d902ccc86766371a
-    2.1.0: c954cdd723bad4ee20e57f107fe1064f0a00f4c349c1826b7a0f89d02f94dec0
+    1.11.3: edbee010e913de980ab104958d7a6fc8394ea069038ad8c6210db36620284364
+    1.12.1: 9b9c8e061dd77a4feb4ded8e5b175ad302edbd7b6be862fc39ee448631f160e4
   arm64:
-    2.0.4: 0
-    2.1.0: 0
-
-gvisor_runsc_binary_checksums:
-  arm:
-    20210518.0: 0
-  arm64:
-    20210518.0: 0
-  amd64:
-    20210518.0: 907811e10576d31b6f63d2f91f1c3be2b2df94e222fb48eb509fce48cd6ae9e0
-
-gvisor_containerd_shim_binary_checksums:
-  arm:
-    20210518.0: 0
-  arm64:
-    20210518.0: 0
-  amd64:
-    20210518.0: d6deda79562cadf4fc98ccf1d6d9fd1d2dff3890b184c7b546167bd6eff241ec
+    1.11.3: 0
+    1.12.1: 0
 
 nerdctl_archive_checksums:
   arm:
@@ -439,8 +419,6 @@ crictl_binary_checksum: "{{ crictl_checksums[image_arch][crictl_version] }}"
 helm_archive_checksum: "{{ helm_archive_checksums[image_arch][helm_version] }}"
 crun_binary_checksum: "{{ crun_checksums[image_arch][crun_version] }}"
 kata_containers_binary_checksum: "{{ kata_containers_binary_checksums[image_arch][kata_containers_version] }}"
-gvisor_runsc_binary_checksum: "{{ gvisor_runsc_binary_checksums[image_arch][gvisor_version] }}"
-gvisor_containerd_shim_binary_checksum: "{{ gvisor_containerd_shim_binary_checksums[image_arch][gvisor_version] }}"
 nerdctl_archive_checksum: "{{ nerdctl_archive_checksums[image_arch][nerdctl_version] }}"
 krew_archive_checksum: "{{ krew_archive_checksums[krew_version] }}"
 
@@ -461,8 +439,6 @@ calico_node_image_repo: "{{ quay_image_repo }}/calico/node"
 calico_node_image_tag: "{{ calico_version }}{%- if image_arch != 'amd64' -%}-{{ image_arch }}{%- endif -%}"
 calico_cni_image_repo: "{{ quay_image_repo }}/calico/cni"
 calico_cni_image_tag: "{{ calico_cni_version }}{%- if image_arch != 'amd64' -%}-{{ image_arch }}{%- endif -%}"
-calico_flexvol_image_repo: "{{ quay_image_repo }}/calico/pod2daemon-flexvol"
-calico_flexvol_image_tag: "{{ calico_flexvol_version }}{%- if image_arch != 'amd64' -%}-{{ image_arch }}{%- endif -%}"
 calico_policy_image_repo: "{{ quay_image_repo }}/calico/kube-controllers"
 calico_policy_image_tag: "{{ calico_policy_version }}{%- if image_arch != 'amd64' -%}-{{ image_arch }}{%- endif -%}"
 calico_typha_image_repo: "{{ quay_image_repo }}/calico/typha"
@@ -514,10 +490,9 @@ haproxy_image_tag: 2.3
 
 # Coredns version should be supported by corefile-migration (or at least work with)
 # bundle with kubeadm; if not 'basic' upgrade can sometimes fail
+coredns_image_is_namespaced: "{{ (kube_major_version | regex_replace('^v', '') | float) >= 1.21 }}"
 
-coredns_version: "v1.8.0"
-coredns_image_is_namespaced: "{{ (kube_version is version('v1.21.0','>=')) or (coredns_version is version('v1.7.1','>=')) }}"
-
+coredns_version: "v1.7.0"
 coredns_image_repo: "{{ kube_image_repo }}{{'/coredns/coredns' if (coredns_image_is_namespaced | bool) else '/coredns' }}"
 coredns_image_tag: "{{ coredns_version if (coredns_image_is_namespaced | bool) else (coredns_version | regex_replace('^v', '')) }}"
 
@@ -537,7 +512,7 @@ metrics_server_version: "v0.4.2"
 metrics_server_image_repo: "{{ kube_image_repo }}/metrics-server/metrics-server"
 metrics_server_image_tag: "{{ metrics_server_version }}"
 local_volume_provisioner_image_repo: "{{ quay_image_repo }}/external_storage/local-volume-provisioner"
-local_volume_provisioner_image_tag: "v2.4.0"
+local_volume_provisioner_image_tag: "v2.3.4"
 cephfs_provisioner_image_repo: "{{ quay_image_repo }}/external_storage/cephfs-provisioner"
 cephfs_provisioner_image_tag: "v2.1.0-k8s1.11"
 rbd_provisioner_image_repo: "{{ quay_image_repo }}/external_storage/rbd-provisioner"
@@ -733,32 +708,6 @@ downloads:
     unarchive: false
     owner: "root"
     mode: "0755"
-    groups:
-    - k8s_cluster
-
-  gvisor_runsc:
-    enabled: "{{ gvisor_enabled }}"
-    file: true
-    version: "{{ gvisor_version }}"
-    dest: "{{ local_release_dir }}/gvisor-runsc"
-    sha256: "{{ gvisor_runsc_binary_checksum }}"
-    url: "{{ gvisor_download_url }}/runsc"
-    unarchive: false
-    owner: "root"
-    mode: 755
-    groups:
-    - k8s_cluster
-
-  gvisor_containerd_shim:
-    enabled: "{{ gvisor_enabled }}"
-    file: true
-    version: "{{ gvisor_version }}"
-    dest: "{{ local_release_dir }}/gvisor-containerd-shim-runsc-v1"
-    sha256: "{{ gvisor_containerd_shim_binary_checksum }}"
-    url: "{{ gvisor_download_url }}/containerd-shim-runsc-v1"
-    unarchive: false
-    owner: "root"
-    mode: 755
     groups:
     - k8s_cluster
 

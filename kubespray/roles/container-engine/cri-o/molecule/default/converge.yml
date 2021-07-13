@@ -4,4 +4,4 @@
   become: true
   roles:
     - role: kubespray-defaults
-    - role: container-engine/cri-o
+    - role: cri-o

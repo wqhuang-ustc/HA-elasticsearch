@@ -4,4 +4,4 @@
   become: true
   roles:
     - role: kubespray-defaults
-    - role: container-engine/docker
+    - role: docker

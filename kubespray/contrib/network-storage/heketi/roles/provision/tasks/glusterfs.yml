@@ -1,9 +1,6 @@
 ---
 - name: "Kubernetes Apps | Lay Down GlusterFS Daemonset"
-  template:
-    src: "glusterfs-daemonset.json.j2"
-    dest: "{{ kube_config_dir }}/glusterfs-daemonset.json"
-    mode: 0644
+  template: { src: "glusterfs-daemonset.json.j2", dest: "{{ kube_config_dir }}/glusterfs-daemonset.json" }
   become: true
   register: "rendering"
 - name: "Kubernetes Apps | Install and configure GlusterFS daemonset"
@@ -30,10 +27,7 @@
   delay: 5
 
 - name: "Kubernetes Apps | Lay Down Heketi Service Account"
-  template:
-    src: "heketi-service-account.json.j2"
-    dest: "{{ kube_config_dir }}/heketi-service-account.json"
-    mode: 0644
+  template: { src: "heketi-service-account.json.j2", dest: "{{ kube_config_dir }}/heketi-service-account.json" }
   become: true
   register: "rendering"
 - name: "Kubernetes Apps | Install and configure Heketi Service Account"

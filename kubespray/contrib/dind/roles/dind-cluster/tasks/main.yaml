@@ -35,7 +35,6 @@
       path-exclude=/usr/share/doc/*
       path-include=/usr/share/doc/*/copyright
     dest: /etc/dpkg/dpkg.cfg.d/01_nodoc
-    mode: 0644
   when:
     - ansible_os_family == 'Debian'
 
@@ -64,7 +63,6 @@
   copy:
     content: "{{ distro_user }} ALL=(ALL) NOPASSWD:ALL"
     dest: "/etc/sudoers.d/{{ distro_user }}"
-    mode: 0640
 
 - name: Add my pubkey to "{{ distro_user }}" user authorized keys
   authorized_key:

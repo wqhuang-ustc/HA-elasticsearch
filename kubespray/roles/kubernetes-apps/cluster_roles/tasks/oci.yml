@@ -3,7 +3,6 @@
   copy:
     src: "oci-rbac.yml"
     dest: "{{ kube_config_dir }}/oci-rbac.yml"
-    mode: 0640
   when:
   - cloud_provider is defined
   - cloud_provider == 'oci'

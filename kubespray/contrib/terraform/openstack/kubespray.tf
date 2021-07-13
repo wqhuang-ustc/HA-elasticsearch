@@ -83,7 +83,6 @@ module "compute" {
   use_server_groups                            = var.use_server_groups
   extra_sec_groups                             = var.extra_sec_groups
   extra_sec_groups_name                        = var.extra_sec_groups_name
-  group_vars_path                              = var.group_vars_path
 
   network_id = module.network.router_id
 }

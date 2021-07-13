@@ -33,13 +33,11 @@
       template:
         src: gcs_life.json.j2
         dest: "{{ dir }}/gcs_life.json"
-        mode: 0644
 
     - name: Create a boto config to access GCS
       template:
         src: boto.j2
         dest: "{{ dir }}/.boto"
-        mode: 0640
       no_log: True
 
     - name: Download gsutil cp installer
@@ -76,5 +74,5 @@
       failed_when: false
       no_log: True
 
-    - debug:  # noqa unnamed-task
+    - debug:
         msg: "A public url https://storage.googleapis.com/{{ test_name }}/{{ file_name }}"

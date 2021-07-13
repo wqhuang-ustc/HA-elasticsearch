@@ -151,7 +151,3 @@ variable "image_master" {
 variable "image_master_uuid" {
   type = string
 }
-
-variable "group_vars_path" {
-  type = string
-}

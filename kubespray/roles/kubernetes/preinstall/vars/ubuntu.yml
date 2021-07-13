@@ -1,6 +1,6 @@
 ---
 required_pkgs:
-  - python3-apt
+  - python-apt
   - aufs-tools
   - apt-transport-https
   - software-properties-common
