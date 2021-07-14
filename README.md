@@ -4,8 +4,7 @@ This is a repo for codes required to deploy a highly-available Elasticsearch Clu
 ## Introduction and goal
 This assignment required deploying a high-available Elasticsearch(ES) cluster using Docker and Kubernetes. Each ES instance in the ES cluster should be located on a different k8s worker nodes for high availability consideration, also all ES instances should have the same ES roles(master, data, ingest, etc..). This solution can be deployed in the cloud or on-premise k8s cluster. A block diagram of the solution is shown below:
 
-![Elasticsearch Cluster](Elastic-cluster.png)
-<img src="https://github.com/wqhuang-ustc/elasticsearch-assignment/blob/main/Elastic-cluster.png" width="96">
+<img src="https://github.com/wqhuang-ustc/elasticsearch-assignment/blob/main/Elastic-cluster.png" width="800">
 
 ## Table of Contents
   - [Introduction and goal](#introduction-and-goal)
