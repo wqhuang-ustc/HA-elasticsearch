@@ -2,23 +2,37 @@
 This is a repo for codes required to deploy a highly-available Elasticsearch Cluster for an assignment.
 
 ## Introduction and goal
-This assignment required to deploy a high-available Elasticsearch(ES) cluster using Docker and Kubernetes. Each ES instance in the ES cluster should be located on different k8s worker node for high availability consideration, also all ES instance should have the same ES roles(master, data, ingest, etc..). This solution can be deployed in cloud or on-premise k8s cluster.
+This assignment required deploying a high-available Elasticsearch(ES) cluster using Docker and Kubernetes. Each ES instance in the ES cluster should be located on a different k8s worker nodes for high availability consideration, also all ES instances should have the same ES roles(master, data, ingest, etc..). This solution can be deployed in the cloud or on-premise k8s cluster.
+
+## Table of Contents
+  - [Introduction and goal](#introduction-and-goal)
+  - [Table of Contents](#table-of-contents)
+  - [Kubernetes nodes provisioning](#kubernetes-nodes-provisioning)
+    - [Installation of Vagrant and VirtualBox](#installation-of-vagrant-and-virtualbox)
+    - [Configure VMs in the Vagrantfile and build](#configure-vms-in-the-vagrantfile-and-build)
+  - [Deploy the Kubernetes via Kubespray](#deploy-the-kubernetes-via-kubespray)
+  - [Kubernetes dashboard](#kubernetes-dashboard)
+  - [Launch High available Elasticsearch in the Kubernetes cluster](#launch-high-available-elasticsearch-in-the-kubernetes-cluster)
+  - [Launch Kibana to visualize and manage the Elasticsearch cluster](#launch-kibana-to-visualize-and-manage-the-elasticsearch-cluster)
+  - [High Availability consideration](#high-availability-consideration)
+  - [Monitoring of the ES cluster](#monitoring-of-the-es-cluster)
+  - [Reference](#reference)
 
 ## Kubernetes nodes provisioning
-I prefer to provisioning Virtual Machines(VMs) using Infrastructure as Code(IaC). IaC manages infrastructures(virtual machine, networks, disks etc.) in a declative way with configuration file, it allow you to build, change and manage your infrastructure in a safe, consistent, repeatable way.
+I prefer provisioning Virtual Machines(VMs) using Infrastructure as Code(IaC). IaC manages infrastructures(virtual machine, networks, disks etc.) in a declarative way with the configuration file, it allows you to build, change and manage your infrastructure in a safe, consistent, repeatable way.
 
-For this assignment, I will use Vagrant to create 3 Kubernetes nodes and configure them to satisfy the requirements of being a Kubernetes node. Vagant is an ideal tool to create VMs for development environment and you may use Terraform for provisioning VMs in a production environment. Check this [repo](https://github.com/wqhuang-ustc/terraform-kvm) for creating VMs using Terraform.
+For this assignment, I will use Vagrant to create 3 Kubernetes nodes and configure them to satisfy the requirements of being a Kubernetes node. Vagrant is an ideal tool to create VMs for the development environment and you may use Terraform for provisioning VMs in a production environment. Check this [repo](https://github.com/wqhuang-ustc/terraform-kvm) for creating VMs using Terraform.
 
 ### Installation of Vagrant and VirtualBox
 I use Vagrant version 2.2.16 and VirtualBox 6.1 on my MacOS. For Vagrant installation, check this [link](https://www.vagrantup.com/downloads). Use this [link](https://www.virtualbox.org/wiki/Downloads) to install VirtualBox in your environment.
 
 ### Configure VMs in the Vagrantfile and build
-Modify this [Vagrantfile](kubespray/Vagrantfile) under kubespray directory to further customize the VMs.
+Modify this [Vagrantfile](kubespray/Vagrantfile) under the kubespray directory to further customize the VMs.
 1. $vm_memory (Increase to 4096M because Elasticsearch instance has minimum 2G memory requirement)
 2. $subnet ||= "172.18.8" (Make sure this subnet is not already in use in your environment, change it if needed)
 3. $os ||= "ubuntu1804" (Change this if you prefer other OS)
 
-Run below commands to launch VMs for Kubernetes cluster:
+Run the below commands to launch VMs for the Kubernetes cluster:
 ```
 cd elasticsearch-assignment/kubespray
 vagrant up --provider=virtualbox
@@ -44,7 +58,7 @@ Kubespray is a composition of Ansible playbooks, inventory, provisioning tools, 
    sudo pip install -r requirements.txt
    ```
 4. **Update the Ansible inventory file using the info of VMs created above**
-   Vagrant will generate the inventory automatically while launching the VMs in `.vagrant/provisioners/ansible/inventory/vagrant_ansible_inventory`, check this inventory and confirm the details of each nodes, update it if necessary.
+   Vagrant will generate the inventory automatically while launching the VMs in `.vagrant/provisioners/ansible/inventory/vagrant_ansible_inventory`, check this inventory and confirm the details of each node, update it if necessary.
 5. **Review and modify parameters under "inventory/sample/group_vars" according to your environment and requirements**
    ```
    vim inventory/sample/group_vars/all/all.yml
@@ -101,7 +115,7 @@ Kubespray is a composition of Ansible playbooks, inventory, provisioning tools, 
 
 ## Kubernetes dashboard
 A Kubernetes dashboard will be deployed into the cluster first to provide a web-based UI for this Kubernetes clusters. It allows users to manage applications running in the cluster and troubleshoot them, as well as manage the cluster itself.  
-To install the Dashboard, execute following command:
+To install the Dashboard, execute the following command:
 ```
 kubectl apply -f k8s-dashboard/k8s-dashboard.yaml
 kubectl apply -f dashboard-adminuser.yaml
@@ -117,7 +131,7 @@ kubectl -n kubernetes-dashboard get secret $(kubectl -n kubernetes-dashboard get
 ```
 
 ## Launch High available Elasticsearch in the Kubernetes cluster
-To create a high available Elasticsearch cluster in the Kuberentes cluster, we will deploy a ES StatefulSet with 3 replicas. Each replicas(ES instance) will be scheduled into different Kubernetes node to prevent singel node failure. All the ES instances have [node roles](https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-node.html) of "master", "data", "ingest" and "ml".
+To create a high available Elasticsearch cluster in the Kubernetes cluster, we will deploy an ES StatefulSet with 3 replicas. Each replica(ES instance) will be scheduled into a different Kubernetes node to prevent the single node failure. All the ES instances have [node roles](https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-node.html) of "master", "data", "ingest" and "ml".
 
 1. **Create persistent volume for each ES instance**
 
@@ -156,7 +170,7 @@ spec:
 * "persistentVolumeReclaimPolicy: Retain" to still keep the pv while pvc is deleted.
 * "claimRef" to reserve the volume for a pvc.
 
-Execute following commands to create PersistentVolumes for 3 ES instance:
+Execute the following commands to create PersistentVolumes for 3 ES instance:
 ```
 kubectl apply -f elk7.12/persistent-volume-0.yaml
 kubectl apply -f elk7.12/persistent-volume-1.yaml
@@ -178,7 +192,7 @@ kubectl apply -f elk7.12/all-crds.yaml
 kubectl -n elastic-system get all # To check the status of elastic-operator
 ```
 
-Second, deploy the ES cluster by executing following command:
+Second, deploy the ES cluster by executing the following command:
 ```
 kubectl apply -f elk7.12/elasticsearch.yaml
 ```
@@ -197,13 +211,13 @@ kubectl logs -f name-of-ES-pod
 ```
 ## Launch Kibana to visualize and manage the Elasticsearch cluster
 
-Kibana is an free and open frontend application that sits on top of the Elastic Stack, providing search and data visualization capabilities for data indexed in Elasticsearch. Commonly known as the charting tool for the Elastic Stack. Kibana also acts as the user interface for monitoring, managing, and securing an Elastic Stack cluster
+Kibana is a free and open frontend application that sits on top of the Elastic Stack, providing search and data visualization capabilities for data indexed in Elasticsearch. Commonly known as the charting tool for the Elastic Stack. Kibana also acts as the user interface for monitoring, managing, and securing an Elastic Stack cluster
 
-To deploy an Kibana instance for our ES cluster:
+To deploy a Kibana instance for our ES cluster:
 ```
 kubectl apply -f elk7.12/kibana.yaml
 ```
-I change the default service type from "ClusterIP" to "NodePort" to expose the Kibana service outside the cluster. Otherwise, you need to use port-forward to be able to visit the kibana instance from your local browser via `https://localhost:5601`.
+I change the default service type from "ClusterIP" to "NodePort" to expose the Kibana service outside the cluster. Otherwise, you need to use port-forward to be able to visit the Kibana instance from your local browser via `https://localhost:5601`.
 ```
 kubectl port-forward service/kibana-demo-kb-http 5601
 ```
@@ -214,24 +228,24 @@ kubectl get secret elasticsearch-demo-es-elastic-user -o=jsonpath='{.data.elasti
 
 ## High Availability consideration
 
-The ES cluster we deployed above meet the requirements of being a resilient cluster and can keep working enen if some of the nodes are unavailable or disconnected:
+The ES cluster we deployed above meet the requirements of being a resilient cluster and can keep working even if some of the nodes are unavailable or disconnected:
 * At least three master-eligible nodes
 * At least two nodes of each role
 * At least two copies of each shard
 
-Usually we deploy instances of ES cluster in the same datacenter considering the network latency between Data Centers. This means we could loss the accss to this ES cluster if the whole Data Center is down for some reasons. To prevent one Data Center outage, we can use [cross-cluster replication](https://www.elastic.co/guide/en/elasticsearch/reference/current/xpack-ccr.html) to replicate data to a remote follower ES cluster in another Data Center. Then, we can failover to this remote ES cluster if current Data Center is down.
+Usually, we deploy instances of the ES cluster in the same datacenter considering the network latency between Data Centers. This means we could lose access to this ES cluster if the whole Data Center is down for some reason. To prevent one Data Center outage, we can use [cross-cluster replication](https://www.elastic.co/guide/en/elasticsearch/reference/current/xpack-ccr.html) to replicate data to a remote follower ES cluster in another Data Center. Then, we can failover to this remote ES cluster if the current Data Center is down.
 
 Besides, we can take [regular snapshots](https://www.elastic.co/guide/en/elasticsearch/reference/current/backup-cluster.html) of our ES cluster so that we can restore a completely fresh copy of it elsewhere if needed.
 
 ## Monitoring of the ES cluster
-Elasticsearch provides plenty of metrics that can help us detect signs of trouble and take actions. A few key areas to monitor are:
+Elasticsearch provides plenty of metrics that can help us detect signs of trouble and take action. A few key areas to monitor are:
 1. Search and indexing performance
 2. Memory and garbage collection
 3. Host-level system and network metrics
 4. Cluster health and node availability
 5. Resource saturation and errors
 
-Some of the basic metrics are directly available in the Kibana Cluster overview. For metrics not inclueded in Kibana, you can alway fetch them via [Elasticsearch's RESTful API](https://www.elastic.co/guide/en/elasticsearch/reference/current/rest-apis.html)
+Some of the basic metrics are directly available in the Kibana Cluster overview. For metrics not included in Kibana, you can fetch them via [Elasticsearch's RESTful API](https://www.elastic.co/guide/en/elasticsearch/reference/current/rest-apis.html)
 
 ## Reference
 * https://github.com/kubernetes-sigs/kubespray
