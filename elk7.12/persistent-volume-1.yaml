@@ -10,7 +10,7 @@ spec:
     storage: 20Gi
   accessModes:
     - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Recycle
+  persistentVolumeReclaimPolicy: Retain
   claimRef:
     namespace: default
     name: elasticsearch-data-elasticsearch-demo-es-default-1
